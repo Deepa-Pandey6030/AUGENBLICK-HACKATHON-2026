@@ -1,4 +1,4 @@
-# 🗺️ abctokz Architecture: Simplified Map
+# 🗺️ Task 2: abctokz Architecture Map
 
 This explains how the `abctokz` codebase is split up, why it's split that way, and where the code has some bugs. 
 
