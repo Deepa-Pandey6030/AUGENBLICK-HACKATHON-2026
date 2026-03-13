@@ -13,6 +13,10 @@ from pathlib import Path
 from abctokz import Tokenizer
 from abctokz.config.defaults import bpe_multilingual
 
+# ---------------------------------------------------------------------------
+# Sample corpus
+# ---------------------------------------------------------------------------
+
 CORPUS_LINES = [
     # English
     "hello world",
@@ -20,16 +24,19 @@ CORPUS_LINES = [
     "tokenization is important for natural language processing",
     "machine learning models need good tokenizers",
     "subword segmentation helps with rare words",
+
     # Hindi
     "नमस्ते दुनिया",
     "यह एक परीक्षण वाक्य है",
     "हिन्दी भाषा में टोकनाइजेशन",
     "भारत एक विशाल देश है",
     "मशीन लर्निंग मॉडल के लिए टोकनाइज़र",
+
     # Marathi
     "नमस्कार जग",
     "मराठी भाषेत टोकनायझेशन",
     "हे एक चाचणी वाक्य आहे",
+
     # Mixed
     "hello नमस्ते world दुनिया",
     "BPE tokenizer for Hindi हिन्दी",
@@ -38,20 +45,37 @@ CORPUS_LINES = [
 
 
 def main() -> None:
+
     with tempfile.TemporaryDirectory() as tmp:
+
+        # Create temporary corpus file
         corpus_path = Path(tmp) / "corpus.txt"
         corpus_path.write_text("\n".join(CORPUS_LINES), encoding="utf-8")
 
+        # Build tokenizer config
         config = bpe_multilingual(vocab_size=500)
 
         tokenizer = Tokenizer.from_config(config)
+
         print("Training BPE tokenizer...")
         tokenizer.train([str(corpus_path)], config)
+
         print(f"  Vocabulary size: {tokenizer.get_vocab_size()}")
 
-        artifact_dir = Path(tmp) / "bpe_tok"
+        # -------------------------------------------------------------------
+        # SAVE TOKENIZER INSIDE PROJECT
+        # -------------------------------------------------------------------
+
+        artifact_dir = Path("artifacts/bpe_tok")
+        artifact_dir.mkdir(parents=True, exist_ok=True)
+
         tokenizer.save(str(artifact_dir))
-        print(f"  Saved to: {artifact_dir}")
+
+        print(f"  Saved to: {artifact_dir.resolve()}")
+
+        # -------------------------------------------------------------------
+        # LOAD TOKENIZER AGAIN
+        # -------------------------------------------------------------------
 
         loaded = Tokenizer.load(str(artifact_dir))
 
@@ -63,9 +87,12 @@ def main() -> None:
             "मराठी भाषेत",
             "subword segmentation",
         ]
+
         for text in examples:
+
             enc = loaded.encode(text)
             decoded = loaded.decode(enc.ids)
+
             print(f"\n  Input:   {text!r}")
             print(f"  Tokens:  {enc.tokens}")
             print(f"  IDs:     {enc.ids}")

@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "model_type": "wordlevel",
+  "vocab_size": 49,
+  "created_at": "2026-03-13T20:38:36.924102Z",
+  "description": "",
+  "languages": [],
+  "checksum": "1a415b21f7ff29a9b9baf7d957b9766552a6ced431d05ca69c1e993924ac96d3",
+  "extra": {}
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "model_type": "unigram",
+  "vocab_size": 300,
+  "created_at": "2026-03-13T20:42:05.058144Z",
+  "description": "",
+  "languages": [],
+  "checksum": "",
+  "extra": {}
+}
