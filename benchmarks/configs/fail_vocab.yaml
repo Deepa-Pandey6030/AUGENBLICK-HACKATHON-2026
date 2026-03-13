@@ -1,0 +1,15 @@
+name: test_run
+
+corpus_paths:
+  - data/sample.txt
+
+output_dir: artifacts/test
+
+tokenizer:
+  model:
+    type: bpe
+    vocab_size: -5
+
+  trainer:
+    type: bpe
+    vocab_size: -5

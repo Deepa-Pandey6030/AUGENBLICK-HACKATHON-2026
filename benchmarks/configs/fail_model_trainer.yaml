@@ -1,0 +1,21 @@
+name: test_run
+
+corpus:
+  - data/sample.txt
+
+output_dir: artifacts/test
+
+tokenizer:
+  normalizer:
+    type: nfkc
+
+  pretokenizer:
+    type: whitespace
+
+  model:
+    type: bpe
+    vocab_size: 1000
+
+  trainer:
+    type: wordlevel
+    vocab_size: 1000
