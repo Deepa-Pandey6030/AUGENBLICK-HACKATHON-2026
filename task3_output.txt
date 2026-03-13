@@ -1,0 +1,46 @@
+=== Training abctokz BPE Tokenizer ===
+Vocab size: 720
+
+=== Running Benchmark ===
+=== RESULTS: abctokz BPE ===
+Version      | Words | Tokens | Fertility
+-------------|-------|--------|----------
+English      |    55 |    218 |     3.96
+Devanagari   |    54 |    169 |     3.13
+
+=== RESULTS: GPT-4 (cl100k_base) ===
+Version      | Words | Tokens | Fertility
+-------------|-------|--------|----------
+English      |    55 |    118 |     2.15
+Devanagari   |    54 |    268 |     4.96
+
+=== EXPLANATION OF DIFFERENCES ===
+1. **Why is Devanagari fertility higher? (Script/Vocabulary)**
+   BPE favors English because most training data on the internet (and in GPT-4's dataset)
+   is English. Therefore, English words get merged into single, highly efficient tokens.
+   Devanagari text often gets fragmented into individual consonants and vowel marks (matras)
+   because it is underrepresented in the vocabulary. This causes high fertility (token bloat).
+
+2. **Why GPT-4 is worse for Devanagari than English**
+   Even world-class tokenizers like GPT-4's cl100k_base suffer from 'the tokenizer tax'.
+   You can see the GPT-4 Devanagari token count is disproportionately high compared to its
+   highly-optimized English token count. This makes processing Hindi/Sanskrit far more
+   expensive on OpenAI APIs than processing English.
+
+3. **Did abctokz do better?**
+   Because we trained our `abctokz` BPE model on a 50/50 split of English and Devanagari,
+   its vocabulary is balanced. If its Devanagari fertility is close to its English fertility,
+   it proves that balanced training data fixes the multilingual tokenizer tax!
+
+--- DEEP DIVE: THE 3 CORE FACTORS ---
+
+A. **The Training Data (The Root Cause)**
+   A tokenizer like GPT-4 (cl100k_base) was trained on a massive dataset that is overwhelmingly English. Because it saw so much English, it learned to merge English letters into whole words. It saw very little Devanagari, so it never learned those merges.
+   Our `abctokz` model, however, was trained on a balanced 50/50 corpus of English and Devanagari.
+
+B. **The Vocabulary (The Result)**
+   Because of the training data, GPT-4's vocabulary is packed with full English words (e.g., 'India' = 1 token). However, it lacks whole Devanagari words in its vocabulary. When GPT-4 sees Devanagari text, it has to fall back to splitting it into tiny, fragmented pieces (often individual byte-pairs or characters).
+   Our `abctokz` model, with its balanced training, actually learned whole Devanagari words into its vocabulary, achieving a much better fertility.
+
+C. **The Script Itself (A Minor Factor)**
+   Devanagari script natively has more components per word than English. A single 'character' visual block (a grapheme cluster) like 'ष्ट्र' consists of multiple consonants (ष, ट, र) joined by halants (्). Even with perfectly balanced training data, BPE sometimes struggles to merge all these constituent Unicode points efficiently compared to simple ASCII English letters, which naturally causes Devanagari fertility to be slightly higher, even on optimized models.
